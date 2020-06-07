@@ -12,13 +12,18 @@ class ApiService
     private $container;
     private $unirest;
 
+    const COMMAND_SERVO_ON = 'TURN_SERVO_ON';
+    const COMMAND_SERVO_OFF = 'TURN_SERVO_OFF';
+    const COMMAND_LED_ON = 'TURN_ON';
+    const COMMAND_LED_OFF = 'TURN_OFF';
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->unirest = new \Unirest\Request();
     }
 
-    public function sendEmail($temp, $mode)
+    public function sendEmail($mode)
     {
         $email = $this->container->getParameter('email_alerts');
         $message = (new \Swift_Message())
@@ -28,7 +33,7 @@ class ApiService
 
                 $this->container->get('twig')->render(
                     'Email/email_temperatura.html.twig',
-                    ['temp' => $temp,'mode' => $mode]
+                    ['mode' => $mode]
                 ),
                 'text/html'
             );
@@ -38,25 +43,22 @@ class ApiService
 
     public function activateVent()
     {
-        $talkBackAccess = $this->getTalkBackAccess();
-
-        $resp = $this->unirest->post(
-            "https://api.thingspeak.com/talkbacks/".$talkBackAccess['id']."/commands?api_key=".$talkBackAccess['apiKey']."&command_string=TURN_LEFT"
-        );
-
-        return $resp;
-
+        return $this->sendRequestToTalkBack(self::COMMAND_SERVO_ON);
     }
 
     public function deactivateVent()
     {
-        $talkBackAccess = $this->getTalkBackAccess();
+        return $this->sendRequestToTalkBack(self::COMMAND_SERVO_OFF);
+    }
 
-        $resp = $this->unirest->post(
-            "https://api.thingspeak.com/talkbacks/".$talkBackAccess['id']."/commands?api_key=".$talkBackAccess['apiKey']."&command_string=TURN_RIGHT"
-        );
+    public function turnLedOn()
+    {
+        return $this->sendRequestToTalkBack(self::COMMAND_LED_ON);
+    }
 
-        return $resp;
+    public function turnLedOff()
+    {
+        return $this->sendRequestToTalkBack(self::COMMAND_LED_OFF);
     }
 
     private function getTalkBackAccess()
@@ -68,6 +70,15 @@ class ApiService
             'apiKey' => $apiKey,
             'id' => $talkBackId
         ];
+    }
+
+    private function sendRequestToTalkBack($command)
+    {
+        $talkBackAccess = $this->getTalkBackAccess();
+        $resp = $this->unirest->post(
+            "https://api.thingspeak.com/talkbacks/".$talkBackAccess['id']."/commands?api_key=".$talkBackAccess['apiKey']."&command_string=".$command
+        );
+        return $resp;
     }
 
 }

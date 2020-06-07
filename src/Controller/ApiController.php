@@ -26,25 +26,27 @@ class ApiController extends Controller
 
     public function tempVariationAction(Request $request)
     {
-        $temp = $request->query->get('temperature');
         $mode = $request->query->get('mode');
-        $this->apiService->sendEmail($temp, $mode);
+        $this->apiService->sendEmail($mode);
 
         $activate = $this->getParameter('activate_vent');
 
         if($activate){
             if( ! is_null($mode) && $mode === 'high'){
                 $resp = $this->apiService->activateVent();
+                $ledResp = $this->apiService->turnLedOn();
             }
             else{
                 $resp = $this->apiService->deactivateVent();
+                $ledResp = $this->apiService->turnLedOff();
             }
 
         }
 
         return new JsonResponse([
             'email_sent' => true,
-            'activation_vent_response' => $resp
+            'activation_vent_response' => $resp,
+            'led_response' => $ledResp
         ]);
     }
 }
