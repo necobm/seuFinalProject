@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    email_alerts: "nbrito87@gmail.com"
+    email_from: "nestor@makingtheweb.site"
+    activate_vent: true
+    talkback_api_key: "C4X1WT9ZIRT80MCW"
+    talkback_id: "38858"
 
 services:
     # default configuration for services in *this* file

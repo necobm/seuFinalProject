@@ -2,3 +2,10 @@ framework:
     test: true
     session:
         storage_id: session.storage.mock_file
+
+swiftmailer:
+    transport: "smtp"
+    host:      "localhost"
+    username:  ""
+    password:  ""
+    spool:     { type: memory }

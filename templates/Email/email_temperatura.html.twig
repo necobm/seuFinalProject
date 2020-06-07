@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if mode is defined and mode == 'high' %}
+        <h2>Notificación de subida de temperatura</h2>
+        <p>Hola, este email es para notificarte que la temperatura de tu habitación ha subido a {{ temp }} grados Celcius</p>
+    {% else %}
+        <h2>Notificación de normalización de temperatura</h2>
+        <p>Hola, este email es para notificarte que la temperatura de tu habitación se ha normalizado a {{ temp }} grados Celcius</p>
+    {% endif %}
+{% endblock %}
